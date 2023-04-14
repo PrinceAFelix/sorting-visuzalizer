@@ -28,6 +28,7 @@ public class SortingMVC extends JPanel implements ActionListener{
 	private static final int WIDTH = 1080;
     private static final int HEIGHT = 555;
     private static final int BAR_WIDTH = 5;
+    private static final int DELAY = 10;
 
 	JButton bubbleSortBtn, insertionSortBtn, selectionSortBtn, mergeSortBtn, quickSortBtn, shuffleBtn;
 	JPanel northPanel, centerPanel, southPanel;
@@ -61,12 +62,7 @@ public class SortingMVC extends JPanel implements ActionListener{
 	//Sorting buttons
 	SortingMVC(){
 		
-		for(int i = 0; i < arr.length; i++) {
-			arr[i] = rand.nextInt(10, HEIGHT-55);
-			
-			System.out.println(arr[i]);
-			
-		}
+		shuffle(arr);
 		
 		centerPanel = new JPanel();
 		
@@ -178,28 +174,19 @@ public class SortingMVC extends JPanel implements ActionListener{
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.rotate(Math.toRadians(180.0), x1, y1);
 		
-		
-		
 		for(int i = 0; i < rect.length; i++) {
-			rect[i] = new Rectangle2D.Double(x, y, BAR_WIDTH, arr[i]);	
+			
 			x += 5;
+			rect[i] = new Rectangle2D.Double(x, y, BAR_WIDTH, arr[i]);	
 			
 			g.setColor(Color.WHITE);
 			g2d.fill(rect[i]);
+			
+			
 			if(isSort) {
 				g.setColor(color);
-				
-				try {
-					g2d.fill(rect[current]);
-				}catch(Exception e) {
-					System.out.println(current);
-				}
-				
-				
-				
+				g2d.fill(rect[current]);
 			}
-			
-			
 		}
 		
 		
@@ -214,14 +201,16 @@ public class SortingMVC extends JPanel implements ActionListener{
 	public void showCurrent(int index) {
 		
 		try {
-            Thread.sleep(10);
+            Thread.sleep(DELAY);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 		
 		color = Color.RED;
 		current = index;
+		
 		repaint();
+		
 	}
 	
 	
@@ -258,89 +247,36 @@ public class SortingMVC extends JPanel implements ActionListener{
 			@Override
 			public void run() {
 				isSort = true;
-				int n = arr.length;//Get the array length
-				
 				
 				if(isBubbleSort) {
-					for(int i = 0; i < n; i++) {
-						
-						for(int j = 0; j < n - i - 1; j++) {
-							//Check if the array index 0 is greater than the array of next index
-							if(arr[j] > arr[j+1]) {
-								
-	
-								
-								int temp = arr[j];//Set temp to the current array
-								arr[j] = arr[j+1];//Switch the current array to the value of next array
-								arr[j+1] = temp; //Finally, set the next array to the temp
-								
-								System.out.println("Switch: " + arr[j] + " and " + arr[j+1]);
-								
-								showCurrent(j);
-								
-								
-							}
-
-						}
-					}
+					bubbleSort(arr);
 					isBubbleSort = false;
 				}
 				
 				if(isInsertionSort) {
-					for(int i = 1; i < n; i++) {
-						int current = arr[i];//Represents the current array
-						int j = i-1;
-						//Switch the elements that are greater than the current array
-						while((j >= 0) && (arr[j] > current)){
-							arr [j+1] = arr[j];
-							showCurrent(j);
-							j--;
-							
-							
-						}
-						arr[j+1] = current;
-					}
+					insertionSort(arr);
 					isInsertionSort = false;
 				}
 				
 				
 				if(isSelectionSort) {
-					for(int current = 0; current < n; current++) {
-						
-						int smallest = current; //start smallest at next
-						for(int j = current + 1; j < n; j++) {
-							//Check if array index j is less than the array index current
-							if (arr[j] < arr[smallest])
-								smallest = j; //Set smallest to J if so
-						}
-						
-						int temp = arr[current]; //Set temp to the current array
-						arr[current] = arr[smallest];//Switch the current array to the value of next array
-						arr[smallest] = temp; //Finally, set the next array to the temp
-						showCurrent(current);
-					}
+					selectionSort(arr);
 					isSelectionSort = false;
 				}
 				
 				if(isMergeSort) {
-					
-					mergeSort(arr, 0, n-1);
-					
+					mergeSort(arr, 0, arr.length - 1);
 					isMergeSort = false;
 				}
 				
 				if(isQuickSort) {
-					quickSort(arr, 0, n-1);
+					quickSort(arr, 0, arr.length - 1);
 					isQuickSort = false;
 				}
 				
 				if(isShuffle) {
-					for(int i = 0; i < arr.length; i++) {
-						arr[i] = rand.nextInt(100, 500);
-						
-					}
+					shuffle(arr);
 					repaint();
-					
 					isShuffle = false;
 				}
 
@@ -351,9 +287,75 @@ public class SortingMVC extends JPanel implements ActionListener{
 		animate.start();
 		
 		
+	}
+	
+	private int[] shuffle(int[] arr) {
+		for(int i = 0; i < arr.length; i++) {
+			arr[i] = rand.nextInt(10, HEIGHT-85);
+			
+		}
 		
-		
-		
+		return arr;
+	}
+	
+	public void bubbleSort(int[] arr) {
+		int n = arr.length;
+		for(int i = 0; i < n; i++) {
+			
+			for(int j = 0; j < n - i - 1; j++) {
+				//Check if the array index 0 is greater than the array of next index
+				if(arr[j] > arr[j+1]) {
+					
+
+					
+					int temp = arr[j];//Set temp to the current array
+					arr[j] = arr[j+1];//Switch the current array to the value of next array
+					arr[j+1] = temp; //Finally, set the next array to the temp
+					
+					System.out.println("Switch: " + arr[j] + " and " + arr[j+1]);
+					
+					showCurrent(j);
+					
+					
+				}
+
+			}
+		}
+	}
+	
+	public void insertionSort(int[] arr) {
+		int n = arr.length;
+		for(int i = 1; i < n; i++) {
+			int current = arr[i];//Represents the current array
+			int j = i-1;
+			//Switch the elements that are greater than the current array
+			while((j >= 0) && (arr[j] > current)){
+				arr [j+1] = arr[j];
+				showCurrent(j);
+				j--;
+				
+				
+			}
+			arr[j+1] = current;
+		}
+	}
+	
+	public void selectionSort(int[] arr) {
+		int n = arr.length;
+		for(int current = 0; current < n; current++) {
+			
+			int smallest = current; //start smallest at next
+			for(int j = current + 1; j < n; j++) {
+				//Check if array index j is less than the array index current
+				if (arr[j] < arr[smallest])
+					smallest = j; //Set smallest to J if so
+			}
+			
+			int temp = arr[current]; //Set temp to the current array
+			arr[current] = arr[smallest];//Switch the current array to the value of next array
+			arr[smallest] = temp; //Finally, set the next array to the temp
+			showCurrent(current);
+		}
 	}
 	
 
@@ -378,9 +380,11 @@ public class SortingMVC extends JPanel implements ActionListener{
 		mergeSort(array, mid+1, right);
 		//Calls the merge method
 		
+		
+		
 		merge(array, left, mid, right);
 		
-		repaint();
+		
 		
 	}
 	
@@ -411,14 +415,19 @@ public class SortingMVC extends JPanel implements ActionListener{
 		int leftIndex = 0, rightIndex = 0;
 
 		for (int i = left; i < right + 1; i++) {
+			
 		// if there are still uncopied elements in R and L, copy minimum of the two
 			if (leftIndex < lengthLeft && rightIndex < lengthRight) {
 				if (leftArray[leftIndex] < rightArray[rightIndex]) {
 					array[i] = leftArray[leftIndex];
+					
 					leftIndex++;
+					
 				}else {
 					array[i] = rightArray[rightIndex];
+					
 					rightIndex++;
+					
 				}
 				
 				
@@ -427,6 +436,7 @@ public class SortingMVC extends JPanel implements ActionListener{
 			// if all the elements have been copied from rightArray, copy the rest of leftArray
 			else if (leftIndex < lengthLeft) {
 				array[i] = leftArray[leftIndex];
+				showCurrent(leftIndex);
 				leftIndex++;
 				
 				
@@ -434,8 +444,9 @@ public class SortingMVC extends JPanel implements ActionListener{
 			// if all the elements have been copied from leftArray, copy the rest of rightArray
 			else if (rightIndex < lengthRight) {
 				array[i] = rightArray[rightIndex];
+				showCurrent(rightIndex);
 				rightIndex++;
-				
+			
 				
 			}
 			
@@ -495,7 +506,7 @@ public class SortingMVC extends JPanel implements ActionListener{
 			quickSort(array, start, left-2);
 			quickSort(array, left, end);
 			
-			
+			showCurrent(left);
 		}else {
 			//Move the pivot and call recursively
 			int temp = array[pivot];
@@ -503,7 +514,7 @@ public class SortingMVC extends JPanel implements ActionListener{
 			array[left] = temp;
 			quickSort(array, start, left-1);
 			quickSort(array, left+1, end);
-		
+			showCurrent(left);
 		}
 		
 		

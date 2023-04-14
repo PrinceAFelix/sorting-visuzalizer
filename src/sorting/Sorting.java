@@ -1,6 +1,6 @@
 package sorting;
 
-import java.awt.BorderLayout;
+
 import java.awt.Dimension;
 import java.awt.EventQueue;
 
@@ -20,7 +20,6 @@ public class Sorting {
 		    	
 		    	JPanel sort = new SortingMVC();
 		        JFrame frame = new JFrame();
-//		        frame.setLayout(new BorderLayout());
 		        frame.setTitle("Sorting Visualizer");
 		        frame.setMinimumSize(new Dimension(1080, 700));
 		        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
